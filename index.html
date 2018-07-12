@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>TextAreaTest</title>
+    <script src="editor.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
+  </head>
+
+
+
+<body>
+  <h1 tabindex="0">
+    <p>Navigate using tab</p>
+    <p>When focused on the Code Area, press i to enter the editor</p>
+    <p>Notice that the tab key has normal functionality</p>
+    <p>Press esc to exit the editor</p>
+    <p>Tab can be used to navigate the page again</p>
+
+  </h1>
+  <h2 tabindex="0">Button Area</h2>
+
+  <h2 tabindex="-1">Code Editor</h2>
+
+  <div id= "shell" tabindex="0" onkeydown="focusEditor(event)" role="textbox" aria-multiline="true" aria-label="Code Editor. Press i to enter the editor">
+
+    <div id= "editor" class="editorBorder" contenteditable="true" tabindex="-1" aria-label="Inside Code Editor. Press escape to exit the editor"onkeydown="keyCheck(event)"></div>
+    <!--<textarea id= "editor" tabindex="-1"></textarea>-->
+
+  </div>
+  <h2 tabindex="0">Another Area</h2>
+
+</body>

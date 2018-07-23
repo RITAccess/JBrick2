@@ -1,0 +1,49 @@
+
+h1{
+  font-size: medium;
+}
+
+
+.editorBorder{
+  width:auto;
+  height: auto;
+  outline: none;
+  border-style:solid;
+  border-color:rgb(255, 0, 0);
+
+}
+
+.spanBorder {
+  border: solid blue;
+}
+
+#hiddenTextArea {
+  //left: -1000px;
+	//position: absolute;
+  position: relative;
+}
+
+
+.caret{
+
+  /*gotten from: https://gist.github.com/soham2008xyz/cec634b9b0862fc2ac5a062b3564005c*/
+  -webkit-animation: blink 0.9s infinite;
+  -moz-animation: blink 0.9s infinite;
+  animation: blink 0.9s infinite;
+}
+/*gotten from: https://gist.github.com/soham2008xyz/cec634b9b0862fc2ac5a062b3564005c*/
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0; }
+    100% { opacity: 1; }
+}
+@-webkit-keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0; }
+    100% { opacity: 1; }
+}
+@-moz-keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0; }
+    100% { opacity: 1; }
+}

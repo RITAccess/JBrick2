@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>JBrick</title>
+    <script src="editor.js" defer></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
+  </head>
+
+
+
+<body>
+  <h1 tabindex="0">
+    <p>Navigate using tab</p>
+    <p>When focused on the Code Area, press i to enter the editor</p>
+    <p>Notice that the tab key has normal functionality</p>
+    <p>Press esc to exit the editor</p>
+    <p>Tab can be used to navigate the page again</p>
+
+  </h1>
+  <h2 tabindex="0">Button Area</h2>
+
+  <h2 tabindex="-1">Code Editor</h2>
+
+  <div id= "shell" tabindex="0" onkeydown="focusEditor(event)" role="textbox" aria-multiline="true" aria-label="Code Editor. Press i to enter the editor">
+
+		<!--<textarea type="text" id="hiddenTextArea" tabindex="-1" onkeydown="writeText(event)" onkeyup="writeText(event)" onkeypress="writeText(event)"></textarea>-->
+    <textarea type="text" id="hiddenTextArea" tabindex="-1" onkeydown="pause(event)"></textarea>
+    <div id="editorWrapper" class= 'editorBorder' tabindex="-1">
+      <div id="editor" tabindex="-1">
+
+      </div>
+
+      </div>
+    </div>
+
+	</div>
+
+  <h2 tabindex="0">Another Area</h2>
+
+</body>

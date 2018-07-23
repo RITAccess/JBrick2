@@ -1,0 +1,61 @@
+
+h1{
+  font-size: medium;
+}
+
+.editorBorder{
+  outline: none;
+  border-style:solid;
+  border-color:rgb(255, 0, 0);
+
+}
+
+
+/* [contenteditable="true"]:focus {
+outline: none;
+} */
+
+/* [contenteditable="true"]:focus > div {
+  border-style: dashed;
+  border-color: rgb(0, 0, 0);
+  border-width: medium;
+  background-color: rgb(227, 12, 211);
+} */
+
+.lines {
+  //padding: 10px 0; /* Vertical padding around content */
+  font-size: 150%;
+}
+
+.lines div {
+  padding: 0 4px; /* Horizontal padding of content */
+}
+
+.caret{
+  //visibility:hidden;
+  width:5px;
+  height: 20px;
+  display: inline;
+  background-color: rgb(76, 86, 207);
+
+  /*gotten from: https://gist.github.com/soham2008xyz/cec634b9b0862fc2ac5a062b3564005c*/
+  -webkit-animation: blink 0.9s infinite;
+  -moz-animation: blink 0.9s infinite;
+  animation: blink 0.9s infinite;
+}
+/*gotten from: https://gist.github.com/soham2008xyz/cec634b9b0862fc2ac5a062b3564005c*/
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0; }
+    100% { opacity: 1; }
+}
+@-webkit-keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0; }
+    100% { opacity: 1; }
+}
+@-moz-keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0; }
+    100% { opacity: 1; }
+}

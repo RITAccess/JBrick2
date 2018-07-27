@@ -13,22 +13,14 @@ h1{
 
 }
 
-#editor {
-  position: relative;
-}
-
 pre {
-  font-family: "Courier New";
+  font-family: Arial, Helvetica, sans-serif;
   //margin: 5px;
   font-size: 1em;
 }
 
-pre > span {
-  display: inline-block;
-}
-
 span > span {
-  //position:relative;
+  position:relative;
 }
 
 .spanBorder {
@@ -43,16 +35,13 @@ span > span {
 
 
 .caret{
-  //width: 1em;
-  width: 1px;
+  width: 1em;
   height: 1em;
-  position: absolute;
-  top: 0;
-  left: 0;
-
+  //display: inline-block;
   background-color: rgb(34, 194, 1);
   color: rgb(34, 194, 1);
-  z-index: -1;
+  z-index: 2;
+  position: absolute;
 
   /*gotten from: https://gist.github.com/soham2008xyz/cec634b9b0862fc2ac5a062b3564005c*/
   /* -webkit-animation: blink 0.9s infinite;

@@ -19,7 +19,7 @@ h1{
 
 pre {
   font-family: "Courier New";
-  //margin: 5px;
+  margin: 5px 0px;
   font-size: 1em;
 }
 
@@ -44,8 +44,8 @@ span > span {
 
 .caret{
   //width: 1em;
-  width: 1px;
-  height: 1em;
+  width: 10px;
+  height: 0px;
   position: absolute;
   top: 0;
   left: 0;
@@ -55,12 +55,12 @@ span > span {
   z-index: -1;
 
   /*gotten from: https://gist.github.com/soham2008xyz/cec634b9b0862fc2ac5a062b3564005c*/
-  /* -webkit-animation: blink 0.9s infinite;
+  -webkit-animation: blink 0.9s infinite;
   -moz-animation: blink 0.9s infinite;
-  animation: blink 0.9s infinite; */
+  animation: blink 0.9s infinite;
 }
 /*gotten from: https://gist.github.com/soham2008xyz/cec634b9b0862fc2ac5a062b3564005c*/
-/* @keyframes blink {
+@keyframes blink {
     0% { opacity: 1; }
     50% { opacity: 0; }
     100% { opacity: 1; }
@@ -74,4 +74,4 @@ span > span {
     0% { opacity: 1; }
     50% { opacity: 0; }
     100% { opacity: 1; }
-} */
+}

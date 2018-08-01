@@ -28,7 +28,7 @@
 
   <div id= "shell" tabindex="0" onkeydown="focusEditor(event)" role="textbox" aria-multiline="true" aria-label="Code Editor. Press i to enter the editor">
 
-    <textarea type="text" id="hiddenTextArea" tabindex="-1" onkeydown="pause(event)"></textarea>
+    <textarea type="text" id="hiddenTextArea" tabindex="-1" onkeydown="keyEvent(event)"></textarea>
 
     <div id="editorWrapper" class= 'editorBorder' tabindex="-1">
       <div id="editor" tabindex="-1" onclick="clicked(event)"></div>

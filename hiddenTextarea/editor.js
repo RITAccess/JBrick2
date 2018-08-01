@@ -1,115 +1,292 @@
 
 /*** EDITOR ***/
 
-let numberOfLines = 1;		//total number of lines in the editor
-let currentSpan;					//the span currently being edited, usually the last span child of the line
-let textArea = getElt('hiddenTextArea');
-let caret = new Caret(textArea);
+let hiddenTextArea        = getElt('hiddenTextArea');        // the hidden textarea element
+let editor                = getElt('editor');                // the editor div element
+let currentSpan           = {};		                           //the span currently being edited, usually the last span child of the line
+let numberOfLines         = 0;		                           //total number of lines in the editor
+let currentLineArrayIndex = 0;                               //line the caret is currently on
+let lineArray             = [];                              //Array of created lines
+let line;                                                    // the Line Object
+let caret;                                                   //the Caret Object
+let keyHandler;                                              //the Key Handler Object
+
+initialize(); //Initalize the editor
+
+/***************************************************
+*                HELPER FUNCTIONS
+*
+*
+/***************************************************/
+
+//INITIALIZE
+//Creates a key handler, caret, and the first line
+function initialize()
+{
+  keyHandler = new KeyHandler();      //Create Key Handler Object
+  caret      = new Caret();           //Create Caret Object
+  makeNewLine();                      //Create a new line
+  caret.createCaret();                //Create a caret object
+  caret.appendCaret();                //Append the caret to the editor
+}
 
 
 
-newLine();
+//MAKE NEW LINE
+//Creates a new line - duh!
+function makeNewLine()
+{
+  line = new LineObject();          //Create a Line Object
+  line.createNewLine();             //Create new line
+  lineArray.push(line);             //Add new line to the lineArray
+  caret.setCurrentLineObject(line); //Set the position of the caret in the new line
+}
 
-caret.createCaret();
-caret.appendCaret(getElt('editor'));
-console.log('Caret parent ' + caret.caret.parentElement.id);
 
+//SET CURRENT LINE
+//Set the currentLineArrayIndex (clai) to the line the caret is on
+function setCurrentLine()
+{
+  currentLineArrayIndex = caret.currentLineObject.number;//Set clai to the caret's currentLineObject's line number
+}
 
+//KEY EVENT
+//Triggered when a key is hit inside of the hiddenTextArea
+function keyEvent(e)
+{
+  let key = e.which || w.keyCode;                           //What key was pressed?
+  setTimeout(function(){ keyHandler.handleKey(key); }, 0);  //Puts the keyHandler Object to work. Need for timing issues
+}
 
-
+//FOCUS Editor
+//Creates hot keys to navigate focus into and out of the editor
 function focusEditor(e)
 {
-  let key = e.which || e.keyCode;//what key was pressed?
+  let key       = e.which || e.keyCode;             //what key was pressed?
 
-  // key = 'i', move focus to the editor
-  if(key === 73)
+  if(key === 73)                                    // key = 'i', move focus to the editor
   {
-    //console.log(key);
-
-    let element =getElt('hiddenTextArea');//editor's div element
-
-    setTimeout(function(){ element.focus(); }, 0);//Put focus in editor's div element. Timing issues
-    focused = true;//mark the editor as focused
-
+    let element = getElt('hiddenTextArea');         //editor's div element
+    setTimeout(function(){ element.focus(); }, 0);  //Put focus in editor's div element. Timing issues
+    focused     = true;                             //mark the editor as focused
   }
 
-  // key = 'esc', move focus to the shell
-  if(key === 27)
+  if(key === 27)                                    // key = 'esc', move focus to the shell
   {
-    //console.log(key);
-
-    getElt('hiddenTextArea').blur();//remove focus from editor
-    focused = false;//mark the editor as unfocused
-    getElt('shell').focus();//focus on shell
+    getElt('hiddenTextArea').blur();                //remove focus from editor
+    focused     = false;                            //mark the editor as unfocused
+    getElt('shell').focus();                        //focus on shell
   }
-
-
 }
 
-//short hand to get and element by ID
+//GET ELEMENT
+//Short hand to get an element by ID
 function getElt(elid)
 {
-	return document.getElementById(elid);
+  return document.getElementById(elid);
 }
 
-//short hand to create and return a new element
+//MAKE ELEMENT
+//Short hand to create and return a new element
 function makeElt(element)
 {
-	return document.createElement(element);
+  return document.createElement(element);
 }
 
-function newLine()
+
+
+
+/***************************************************************************
+*                       KEY HANDLER OBJECT
+*Handles key events that happen while the hiddenTextArea element is focused
+*
+/**************************************************************************/
+function KeyHandler()
 {
-	let spanWord = makeElt('span');
-	//spanWord.setAttribute('class', 'spanBorder');
-	spanWord.setAttribute('id', 'spanWord');
-	currentSpan = spanWord;//for appending contents of current word
-	let spanWrapper = makeElt('span');
-	let preWrapper = makeElt('pre');
-	let editor = getElt('editor');
 
-	spanWord.innerHTML = '&#8203';
-	//spanWord.innerHTML = '0123456789';
+  this.handleKey = function(key)
+  {
+    let contents;
 
-	//spanWrapper.appendChild(spanWord);
-	//preWrapper.appendChild(spanWrapper);
+    if(key == 32)//SPACEBAR
+    {
+      contents = hiddenTextArea.value;		//get contents of hiddenTextArea
+  		currentSpan.textContent = contents;			//put contents into currentSpan
+      lineArray[currentLineArrayIndex].setLineWidth();
+  		lineArray[currentLineArrayIndex].createNewWord();
+      hiddenTextArea.value = '';
+      caret.setCaretPosition();
+    }
+    if(key == 13)//RETURN
+    {
+      makeNewLine();
+      setCurrentLine();
+      hiddenTextArea.value = '';
+      caret.setCaretPosition();
 
-  preWrapper.appendChild(spanWord);
-
-	preWrapper.setAttribute('id', numberOfLines);
-	editor.appendChild(preWrapper);
-
-	numberOfLines++;
-
-	caret.setLineRange(document.getElementById('1'));
-  console.log('span width: ' + $(currentSpan).width());
+    }
+    //EVERYTHING ELSE
+    else {
+      contents = hiddenTextArea.value;		//get contents of hiddenTextArea
+  		currentSpan.textContent = contents;			//put contents into currentSpan
+      lineArray[currentLineArrayIndex].setLineWidth();
+      caret.setCaretPosition();
+    }
+  }
 
 }
 
-/*** Create a new span element to hold a new word in the line ***/
-function createSpanWord()
+/***************************************************************************
+*                               LINE OBJECT
+*
+*
+/***************************************************************************/
+function LineObject()
 {
-	let spanWord = makeElt('span');
-	//spanWord.setAttribute('class', 'spanBorder');															//create new span element
-	currentSpan.parentElement.appendChild(spanWord);				//append the new span element to the parent node of the currentSpan
-	currentSpan = spanWord;																	//set currentSpan to the newly appended span element
-	clearTextArea('word');																	//clear the hiddenTextArea to prepare for a new word to be typed in
+
+  this.number =  numberOfLines;
+  this.preWrapper;
+  this.spanWrapper;
+  this.spanArray = [];
+  this.lineWordCount;
+  this.characterSize;
+  this.lineWidth;
+  this.lineHeight;
+  this.contentHeight;
+  this.heightForCaret;
+
+  this.createNewLine = function()
+  {
+    let word = makeElt('span');
+  	//spanWord.setAttribute('class', 'spanBorder');
+  	word.setAttribute('id', 'spanWord');
+    word.innerHTML = '&#8203';
+    //word.innerHTML = '0123456789';
+    //word.innerHTML = '&nbsp';
+
+    this.spanArray.push(word);
+    this.lineWordCount = this.spanArray.length;
+    currentSpan = word;//for appending contents of current word
+
+    this.spanWrapper = makeElt('span');
+    this.spanWrapper.appendChild(word);
+
+  	this.preWrapper = makeElt('pre');
+    this.preWrapper.setAttribute('id', this.number);
+    this.preWrapper.appendChild(this.spanWrapper);
+  	editor.appendChild(this.preWrapper);
+    this.setLineWidth();
+    this.setLineHeight();
+
+    this.setCharacterSize();
+
+  	numberOfLines++;
+  }
+
+  this.createNewWord = function()
+  {
+    let word = makeElt('span');
+  	//spanWord.setAttribute('class', 'spanBorder');
+  	word.setAttribute('id', 'spanWord');
+    word.innerHTML = '&#8203';
+    //word.innerHTML = '0123456789';
+    //word.innerHTML = '&nbsp';
+
+    this.spanArray.push(word);
+    this.lineWordCount = this.spanArray.length;
+    this.spanWrapper.appendChild(word);
+    currentSpan = word;//for appending contents of current word
+  }
+
+  this.setCharacterSize = function()
+  {
+    if(numberOfLines == 0)
+    {
+      this.characterSize = 10;
+    }
+    else {
+      this.characterSize = lineArray[currentLineArrayIndex].characterSize;
+    }
+
+
+  }
+
+  this.setLineWidth = function()
+  {
+    this.lineWidth = $(this.spanWrapper).width();
+  }
+
+  this.setLineHeight = function()
+  {
+    let actualHeight = $(this.preWrapper).outerHeight(true);
+    let preTopMargin = parseInt($(this.preWrapper).css('marginTop'));
+    this.lineHeight = actualHeight - preTopMargin;
+    this.contentHeight = $(this.preWrapper).outerHeight();
+  }
+
+
 }
 
-/*** Clear the hiddenTextArea content
-/*** 'word' argument adds a space to the hiddenTextArea
-/*** 'line' argument adds nothing to the hiddenTextArea ***/
-function clearTextArea(option)
+/***************************************************************************
+*                               CARET OBJECT
+*
+*
+/**************************************************************************/
+function Caret()
 {
-	if(option == 'word')
-	{
-		getElt('hiddenTextArea').value = '';
-	}
-	if(option == 'line')
-	{
-		getElt('hiddenTextArea').value = '';
-	}
+  this.caret;
+  this.width;
+  this.height = 0;
+  this.top;
+  this.left;
+  this.currentLineObject;
+
+  this.createCaret = function()
+  {
+    this.caret = makeElt('div')
+		this.caret.setAttribute('id', 'caret');
+		this.caret.setAttribute('class', 'caret');
+    this.height = this.currentLineObject.contentHeight;
+    $(this.caret).css('height', this.height);
+  }
+
+  this.appendCaret = function()
+  {
+    editor.appendChild(this.caret);
+  }
+
+  this.setCaretPosition = function()
+  {
+    this.setCaretLeftPosition();
+    this.setCaretTopPosition();
+  }
+
+  this.setCaretLeftPosition = function()
+  {
+    this.left = this.currentLineObject.lineWidth;
+    $(this.caret).css('left', this.left);
+  }
+
+  this.setCaretTopPosition = function()
+  {
+    let multiplier = numberOfLines - 1;
+
+    if(numberOfLines)
+    {
+      let lineHeight = this.currentLineObject.lineHeight;
+      this.top = lineHeight * multiplier;
+      $(this.caret).css('top', this.top);
+    }
+
+  }
+
+  this.setCurrentLineObject = function(lineObject)
+  {
+    this.currentLineObject = lineObject;
+  }
+
 }
+
 
 /*** Put the text from the previous span into the hiddenTextArea to allow editing ***/
 function setTextArea()
@@ -140,140 +317,63 @@ function removeSpanWord()
 	}
 }
 
-//needed for onkeypress event - otherwise writing is delayed one character
-//calles writeText immediately
-function pause(e)
-{
-	setTimeout(function(){ writeText(e); }, 0);
-}
+// /*** Writes text to the fake editor ***/
+// function writeText(e)
+// {
+// 	let contents;
+//
+// 	let key = e.which || e.keyCode;		//what key was pressed?
+//
+//
+//
+// 	/*** KEY BEHAVIOR ***/
+// 	if(key == 32)		//SPACEBAR
+// 	{
+//    contents = hiddenTextArea.value;		//get contents of hiddenTextArea
+// 		currentSpan.textContent = contents;			//put contents into currentSpan
+//     lineArray[currentLineArrayIndex].setLineWidth();
+//     caret.setCaretLeftPosition();
+// 		lineArray[currentLineArrayIndex].createNewWord();
+// 	}
+// 	else if (key == 8 && getElt('hiddenTextArea').value == '')		//DELETE - if hitting delete key AND the hiddenTextArea is empty
+// 	{
+// 		//if the current span is not the only child of the pre and there is more than one line
+// 		if(currentSpan.previousSibling && numberOfLines > 1)
+// 		{
+// 			setTextArea();			//put text from previous span into the hiddenTextArea
+// 			removeSpanWord();		//remove the last span of the line
+//
+// 		}
+// 		//if the current span is not the only child of the pre and there is only one line
+// 		else if(currentSpan.previousSibling && numberOfLines == 1)
+// 		{
+// 			setTextArea();			//put text from previous span into the hiddenTextArea
+// 			removeSpanWord();		//remove the last span of the line
+//
+// 		}
+// 		else 		//currentSpan is the only child of the pre
+// 		{
+// 			currentSpan.innerHTML = '&#8203'; //set currentSpans HTML to blank
+//
+// 		}
+// 	}
+// 	else if (key == 13)		//RETURN
+// 	{
+// 		newLine();
+// 		clearTextArea('line');
+//
+// 	}
+// 	else    //take text from the hiddenTextArea and put it into the currentSpan
+// 	{
+// 		contents = getElt('hiddenTextArea').value;		//get contents of hiddenTextArea
+// 		currentSpan.textContent = contents;			//put contents into currentSpan
+//     lineArray[currentLineArrayIndex].setLineWidth();
+//     caret.setCaretLeftPosition();
+//
+// 	}
+//
+// }
 
-/*** Writes text to the fake editor ***/
-function writeText(e)
-{
-	let contents;
-
-	let key = e.which || e.keyCode;		//what key was pressed?
-
-
-
-	/*** KEY BEHAVIOR ***/
-	if(key == 32)		//SPACEBAR
-	{
-
-		currentSpan.insertAdjacentHTML('afterend', '&nbsp;');
-		createSpanWord();		//append a new span child for new word to be typed in
-		caret.setCaretPosition(currentSpan);
-	}
-	else if (key == 8 && getElt('hiddenTextArea').value == '')		//DELETE - if hitting delete key AND the hiddenTextArea is empty
-	{
-		//if the current span is not the only child of the pre and there is more than one line
-		if(currentSpan.previousSibling && numberOfLines > 1)
-		{
-			setTextArea();			//put text from previous span into the hiddenTextArea
-			removeSpanWord();		//remove the last span of the line
-			caret.setCaretPosition(currentSpan);
-		}
-		//if the current span is not the only child of the pre and there is only one line
-		else if(currentSpan.previousSibling && numberOfLines == 1)
-		{
-			setTextArea();			//put text from previous span into the hiddenTextArea
-			removeSpanWord();		//remove the last span of the line
-			caret.setCaretPosition(currentSpan);
-		}
-		else 		//currentSpan is the only child of the pre
-		{
-			currentSpan.innerHTML = '&#8203'; //set currentSpans HTML to blank
-			caret.setCaretPosition(currentSpan);
-		}
-	}
-	else if (key == 13)		//RETURN
-	{
-		newLine();
-		clearTextArea('line');
-		caret.setCaretPosition(currentSpan);
-	}
-	else    //take text from the hiddenTextArea and put it into the currentSpan
-	{
-		contents = getElt('hiddenTextArea').value;		//get contents of hiddenTextArea
-		currentSpan.textContent = contents;			//put contents into currentSpan
-		caret.setCaretPosition(currentSpan);
-	}
-
-}
-
-/*** CARET OBJECT ***/
-function Caret(textArea)
-{
-	this.caret;
-	this.selection;
-	this.lineRange = document.createRange();
-  this.startNode;
-  this.endNode;
-  this.endNodeLength;
-	this.lineWidth;
-	this.textArea = textArea;
-	this.anchorSpan;
-
-
-	//CREATE CARET
-	this.createCaret = function()
-	{
-		this.caret = makeElt('div')
-		this.caret.setAttribute('id', 'caret');
-		this.caret.setAttribute('class', 'caret');
-
-	}
-
-	//APPEND CARET
-	this.appendCaret = function(element)
-	{
-		//element.appendChild(this.caret);
-		//$(element).after(this.caret);
-		//this.range.insertNode(this.caret);
-    element.appendChild(this.caret);
-	}
-
-	//SET SELECTION
-	this.setLineRange = function(element)
-	{
-
-    this.lineRange.selectNode(element);
-
-    this.startNode = element.firstChild.firstChild;
-
-    this.lineRange.setStart(this.startNode, 0);
-
-    this.endNode = element.lastChild.firstChild;
-
-    this.endNodeLength = this.endNode.length;
-
-    this.lineRange.setEnd(this.endNode, this.endNodeLength);
-
-    console.log(this.lineRange);
-
-    let s = window.getSelection();
-    s.addRange(this.lineRange);
-
-
-
-	}
-
-	//SET CARET POSITION
-	this.setCaretPosition = function(element)
-	{
-		let width = $(element).width();
-    this.lineWidth = this.lineWidth + width;
-		$('#caret').css('left', width);
-
-	}
-
-  //SET LINE WIDTH
-  this.setLineWidth = function()
-  {
-    
-  }
-
-}
 
 function getHiddenTextBoxCaretPosition(element)
 {
@@ -303,4 +403,15 @@ function fontSize(e)
 	}
 	size = size + 'em';
 	$("#editor").css("font-size", size);
+
+
+
+  let cs = caret.characterSize;
+  let sw = $(currentSpan).width();
+  console.log("OLD CHARACTER SIZE: " + cs);
+  console.log("NEW FONT SIZE: " + sw);
+
+  console.log('DIFFERENCE: ' + (sw - cs));
+
+  caret.setCharacterSize(sw);
 }

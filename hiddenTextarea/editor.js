@@ -302,42 +302,61 @@ function Caret()
 /**************************************************************************/
 function Reader()
 {
-
-  this.readChar = function(key)
+  // READ CHAR
+  //Sets the div with id = char to the entered keys
+  //This triggers the aria-live region to read the update
+  this.readChar     = function(key)
   {
-    let char = String.fromCharCode(key);
-    $('#char').text(char);
+    let char        = String.fromCharCode(key);                   //Get the character
+    $('#char').text(char);                                        //Append the character to the div element
   }
 
-  this.readWord = function(contents)
+  // READ WORD
+  //Sets the div with id = word to the content argument
+  //This triggers the aria-live region to read the update
+  this.readWord     = function(contents)
   {
-    $('#word').text(contents);
+    $('#word').text(contents);                                    //Append the contents to the div element
   }
 
+  /* READ SENTENCE
+  /
+  /  Sets the div with id = sentence to the words contained in the spanArray of the current line
+  /
+  /  For the aria-live region to trigger the screenreader, the contents of the sentence must change
+  /
+  /  This is not an issue when adding new words,
+  /
+  /  However,
+  /  In order to re-read the same sentence without adding content, a sentinal character is appended to the contents
+  /  of the sentence div element - this change is enough to trigger the screenreader and not read the sentinal character
+  */
   this.readSentence = function()
   {
-    let array = lineArray[currentLineArrayIndex].spanArray;
-    let sentence = '';
-    let check = $('#sentence').text();
-    let size = check.length;
+    let array       = lineArray[currentLineArrayIndex].spanArray; //Get the current line's spanArray
+    let sentence    = '';                                         //Reset the sentence to be put into the div element
+    let sentinal    = $('#sentence').text();                      // Gret current div conents to check for the sentinal character
+    let size        = sentinal.length;                            // Length of the sentinal string
 
-
+    //Build a string from the current line's spanArray
     $.each(array, function(index, value)
     {
-      sentence = sentence + value.textContent;
+      sentence      = sentence + value.textContent;
     });
 
-    $('#sentence').empty();
+    $('#sentence').empty();                                       //Clear the current contents of the div
 
-    if(check[size - 1] === ";")
+    //If the sentinal is the last character of the string, remove it
+    //Else, append the sentinal character ';' to the end of the string
+    if(sentinal[size - 1] === ";")
     {
       sentence.slice(0 , size - 1);
     }
     else {
-      sentence = sentence + ";";
+      sentence      = sentence + ";";
     }
 
-    $('#sentence').text(sentence);
+    $('#sentence').text(sentence);                                // Put the string into the div
 
   }
 }

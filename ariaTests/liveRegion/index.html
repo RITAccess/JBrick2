@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>JBrick</title>
+    <script src="editor.js" defer></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
+  </head>
+
+<body>
+
+  <br />
+  <b>SELECT RADIO BELOW AND ENTER TEXT HERE</b><br/>
+  <textarea type="text" id="textArea" aria-hidden="true" tabindex="-1" onkeydown="keyEvent(event)"></textarea>
+  <br />
+  <br />
+
+  <form id="editors">
+
+
+      <input type="radio" value="1" name="group1" checked="checked">
+      <pre>
+        <b>Reads nothing / Announces shell div as edit text</b>
+        PARENT: shell     | ROLE: textbox   | LIVE:               | ATOMIC:
+        CHILD : editor1   | ROLE:           | LIVE: assertive     | ATOMIC: true or false
+      </pre>
+
+      <div id= "shell" tabindex="0" role="textbox">
+        <div id="editor1" style="border: solid; width: auto; height: auto;" tabindex="-1" aria-live="assertive" aria-atomic="false"></div>
+      </div>
+
+      <br />
+      <br />
+
+      <input type="radio" value="2" name="group1">
+      <pre>
+        <b>Reads entire contents no matter ATOMIC setting / Announces shell div as edit text</b>
+        PARENT: shell     | ROLE: textbox   | LIVE: assertive     | ATOMIC: true or false
+        CHILD : editor2   | ROLE:           | LIVE:               | ATOMIC:
+      </pre>
+
+      <div id= "shell" tabindex="0" role="textbox" aria-live="assertive" aria-atomic="false">
+        <div id="editor2" style="border: solid; width: auto; height: auto;" tabindex="-1"></div>
+      </div>
+
+      <br />
+      <br />
+
+      <input type="radio" value="3" name="group1">
+      <pre>
+        <b>Reads as expected and obeys ATOMIC setting / Announces shell div as group</b>
+        PARENT: shell     | ROLE:          | LIVE:               | ATOMIC:
+        CHILD : editor3   | ROLE:          | LIVE: assertive     | ATOMIC: false
+      </pre>
+
+      <div id= "shell" tabindex="0">
+        <div id="editor3" style="border: solid; width: auto; height: auto;" tabindex="-1"  aria-live="assertive" aria-atomic="false"></div>
+      </div>
+
+
+  </form>
+
+
+
+</body>

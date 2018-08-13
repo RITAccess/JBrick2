@@ -35,10 +35,18 @@ span > span {
   border: solid blue;
 }
 
-#hiddenTextArea {
-  //left: -1000px;
+#textArea {
+  //left: -5000px;
 	//position: absolute;
   position: relative;
+
+}
+
+#reader{
+  border: solid thick red;
+  //left: -5000px;
+  //position: absolute;
+  //position: relative;
 }
 
 

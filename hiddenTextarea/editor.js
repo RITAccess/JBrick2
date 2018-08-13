@@ -3,6 +3,8 @@
 
 let hiddenTextArea        = getElt('hiddenTextArea');        // the hidden textarea element
 let editor                = getElt('editor');                // the editor div element
+let shell                 = getElt('shell');                 // the shell wrapper
+let focus                 = false;                            // tracks if the hiddenTextArea is focused
 let currentSpan           = {};		                           //the span currently being edited, usually the last span child of the line
 let numberOfLines         = 0;		                           //total number of lines in the editor
 let currentLineArrayIndex = 0;                               //line the caret is currently on
@@ -11,7 +13,7 @@ let line;                                                    // the Line Object
 let caret;                                                   //the Caret Object
 let keyHandler;                                              //the Key Handler Object
 
-initialize(); //Initalize the editor
+window.onload = function () { initialize(); } //Initalize the editor
 
 /***************************************************
 *                HELPER FUNCTIONS
@@ -24,6 +26,7 @@ initialize(); //Initalize the editor
 function initialize()
 {
   keyHandler = new KeyHandler();      //Create Key Handler Object
+  reader     = new Reader();          //Create a Reader Object
   caret      = new Caret();           //Create Caret Object
   makeNewLine();                      //Create a new line
   caret.createCaret();                //Create a caret object
@@ -54,11 +57,10 @@ function setCurrentLine()
 //Triggered when a key is hit inside of the hiddenTextArea
 function keyEvent(e)
 {
-  let key = e.which || w.keyCode;                           //What key was pressed?
-  setTimeout(function(){ keyHandler.handleKey(key); }, 0);  //Puts the keyHandler Object to work. Need for timing issues
+  setTimeout(function(){ keyHandler.handleKey(e); }, 0);  //Puts the keyHandler Object to work. Need for timing issues
 }
 
-//FOCUS Editor
+//FOCUS EDITOR
 //Creates hot keys to navigate focus into and out of the editor
 function focusEditor(e)
 {
@@ -66,16 +68,9 @@ function focusEditor(e)
 
   if(key === 73)                                    // key = 'i', move focus to the editor
   {
-    let element = getElt('hiddenTextArea');         //editor's div element
-    setTimeout(function(){ element.focus(); }, 0);  //Put focus in editor's div element. Timing issues
+    //let element = getElt('hiddenTextArea');         //editor's div element
+    setTimeout(function(){ hiddenTextArea.focus(); }, 0);  //Put focus in editor's div element. Timing issues
     focused     = true;                             //mark the editor as focused
-  }
-
-  if(key === 27)                                    // key = 'esc', move focus to the shell
-  {
-    getElt('hiddenTextArea').blur();                //remove focus from editor
-    focused     = false;                            //mark the editor as unfocused
-    getElt('shell').focus();                        //focus on shell
   }
 }
 
@@ -104,11 +99,21 @@ function makeElt(element)
 function KeyHandler()
 {
 
-  this.handleKey = function(key)
+  this.handleKey = function(e)
   {
+    let key = e.which || w.keyCode;
     let contents;
 
-    if(key == 32)//SPACEBAR
+    if (e.ctrlKey && key == 76) {
+      reader.readSentence();
+    }
+    else if(key === 27)                                    // key = 'esc', move focus to the shell
+    {
+      hiddenTextArea.blur();                //remove focus from editor
+      focused     = false;                            //mark the editor as unfocused
+      getElt('shell').focus();                        //focus on shell
+    }
+    else if(key == 32)//SPACEBAR
     {
       contents = hiddenTextArea.value;		//get contents of hiddenTextArea
   		currentSpan.textContent = contents;			//put contents into currentSpan
@@ -116,8 +121,9 @@ function KeyHandler()
   		lineArray[currentLineArrayIndex].createNewWord();
       hiddenTextArea.value = '';
       caret.setCaretPosition();
+      reader.readWord(contents);
     }
-    if(key == 13)//RETURN
+    else if(key == 13)//RETURN
     {
       makeNewLine();
       setCurrentLine();
@@ -131,6 +137,7 @@ function KeyHandler()
   		currentSpan.textContent = contents;			//put contents into currentSpan
       lineArray[currentLineArrayIndex].setLineWidth();
       caret.setCaretPosition();
+      reader.readWord(contents);
     }
   }
 
@@ -287,6 +294,53 @@ function Caret()
 
 }
 
+/***************************************************************************
+*                       READER OBJECT
+* Updates hidden div elements that have aria-live regions for screenreaders
+* to communicate what is being typed
+*
+/**************************************************************************/
+function Reader()
+{
+
+  this.readChar = function(key)
+  {
+    let char = String.fromCharCode(key);
+    $('#char').text(char);
+  }
+
+  this.readWord = function(contents)
+  {
+    $('#word').text(contents);
+  }
+
+  this.readSentence = function()
+  {
+    let array = lineArray[currentLineArrayIndex].spanArray;
+    let sentence = '';
+    let check = $('#sentence').text();
+    let size = check.length;
+
+
+    $.each(array, function(index, value)
+    {
+      sentence = sentence + value.textContent;
+    });
+
+    $('#sentence').empty();
+
+    if(check[size - 1] === ";")
+    {
+      sentence.slice(0 , size - 1);
+    }
+    else {
+      sentence = sentence + ";";
+    }
+
+    $('#sentence').text(sentence);
+
+  }
+}
 
 /*** Put the text from the previous span into the hiddenTextArea to allow editing ***/
 function setTextArea()

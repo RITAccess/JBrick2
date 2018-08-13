@@ -24,18 +24,20 @@
     <button onclick="fontSize(event)">FONT SIZE - </button>
   </span>
 
-  <h2 tabindex="-1">Code Editor</h2>
+  <h2 id="code-editor-label" tabindex="-1">Code Editor</h2>
+  <p id="code-editor-info">Press i to enter the editor</p>
+  <textarea type="text" id="hiddenTextArea" tabindex="-1" aria-hidden="true" onkeydown="keyEvent(event)"></textarea>
+  <div id='char' tabindex="-1" aria-live="assertive" aria-atomic="false"></div>
+  <div id='word' tabindex="-1" aria-live="assertive" aria-atomic="false"></div>
+  <div id='sentence' tabindex="-1" aria-live="assertive" aria-atomic="falses"></div>
 
-  <div id= "shell" tabindex="0" onkeydown="focusEditor(event)" role="textbox" aria-multiline="true" aria-label="Code Editor. Press i to enter the editor">
-
-    <textarea type="text" id="hiddenTextArea" tabindex="-1" onkeydown="keyEvent(event)"></textarea>
-
-    <div id="editorWrapper" class= 'editorBorder' tabindex="-1">
+  <!-- <div id= "shell" tabindex="0" onkeydown="focusEditor(event)" role="textbox" aria-multiline="true" aria-label="Code Editor. Press i to enter the editor"> -->
+  <!-- <div id= "shell" tabindex="0" onkeydown="focusEditor(event)" aria-label="Code Editor. Press i to enter the editor"> -->
+  <div id= "shell" tabindex="0" onkeydown="focusEditor(event)" role="textbox" aria-multiline="true" aria-labelledby="code-editor-label" aria-describedby="code-editor-info">
+    <div id="editorWrapper" class= 'editorBorder' tabindex="-1" >
       <div id="editor" tabindex="-1" onclick="clicked(event)"></div>
     </div>
-
-
-	</div>
+  </div>
 
   <h2 tabindex="0">Another Area</h2>
 

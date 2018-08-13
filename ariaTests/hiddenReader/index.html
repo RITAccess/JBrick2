@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>JBrick</title>
+    <script src="editor.js" defer></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
+  </head>
+
+<body>
+
+  <br />
+  <b>ENTER TEXT HERE</b><br/>
+  <textarea type="text" id="textArea" tabindex="-1" aria-hidden="true" onkeydown="keyEvent(event)"></textarea>
+  <br />
+  <br />
+
+  <div id= "shell" tabindex="0" role="textbox" onkeydown="focusEditor(event)">
+    <div id="editor" style="border: solid; width: auto; height: auto;" tabindex="-1"></div>
+  </div>
+
+  <div id='char' aria-live="assertive" aria-atomic="false"></div>
+  <div id='word' aria-live="assertive" aria-atomic="false"></div>
+  <div id='sentence' aria-live="assertive" aria-atomic="falses"></div>
+
+  <br />
+  <br />
+
+
+
+
+
+
+
+</body>
